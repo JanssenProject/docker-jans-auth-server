@@ -1,5 +1,4 @@
 name: release
-# This builds, packages and releases pygluu-kubernetes
 on:
   push:
     paths:

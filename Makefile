@@ -1,5 +1,5 @@
-JANS_VERSION=4.2.2
-IMAGE_NAME=gluufederation/oxauth
+JANS_VERSION=5.0.0
+IMAGE_NAME=janssenproject/jans-auth-server
 UNSTABLE_VERSION=dev
 
 build-dev:

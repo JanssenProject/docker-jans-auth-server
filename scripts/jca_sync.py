@@ -8,7 +8,7 @@ from settings import LOGGING_CONFIG
 from jans.pycloudlib.document import RClone
 
 ROOT_DIR = "/repository/default"
-SYNC_DIR = "/opt/gluu/jetty/oxauth/custom"
+SYNC_DIR = "/opt/jans/jetty/oxauth/custom"
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("webdav")
@@ -71,7 +71,7 @@ def main():
 
     password_file = os.environ.get(
         "JANS_JACKRABBIT_ADMIN_PASSWORD_FILE",
-        "/etc/gluu/conf/jackrabbit_admin_password",
+        "/etc/jans/conf/jackrabbit_admin_password",
     )
     with contextlib.suppress(FileNotFoundError):
         with open(password_file) as f:

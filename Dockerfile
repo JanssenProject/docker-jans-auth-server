@@ -29,7 +29,7 @@ RUN wget -q https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}
 
 ARG JETTY_VERSION=9.4.26.v20200117
 ARG JETTY_HOME=/opt/jetty
-ARG JETTY_BASE=/opt/gluu/jetty
+ARG JETTY_BASE=/opt/jans/jetty
 ARG JETTY_USER_HOME_LIB=/home/jetty/lib
 
 # Install jetty
@@ -47,7 +47,7 @@ EXPOSE 8080
 # ======
 
 ARG JYTHON_VERSION=2.7.2
-RUN wget -q https://ox.gluu.org/dist/jython/${JYTHON_VERSION}/jython-installer-${JYTHON_VERSION}.jar -O /tmp/jython-installer.jar \
+RUN wget -q https://maven.jans.io/dist/jython/${JYTHON_VERSION}/jython-installer-${JYTHON_VERSION}.jar -O /tmp/jython-installer.jar \
     && mkdir -p /opt/jython \
     && java -jar /tmp/jython-installer.jar -v -s -d /opt/jython \
     && rm -f /tmp/jython-installer.jar /tmp/*.properties
@@ -56,11 +56,11 @@ RUN wget -q https://ox.gluu.org/dist/jython/${JYTHON_VERSION}/jython-installer-$
 # oxAuth
 # ======
 
-ENV JANS_VERSION=4.2.2-SNAPSHOT
+ENV JANS_VERSION=5.0.0-SNAPSHOT
 ENV JANS_BUILD_DATE="2020-09-28 18:23"
 
 # Install oxAuth
-RUN wget -q https://ox.gluu.org/maven/org/gluu/oxauth-server/${JANS_VERSION}/oxauth-server-${JANS_VERSION}.war -O /tmp/oxauth.war \
+RUN wget -q https://maven.jans.io/maven/io/jans/jans-auth-server/${JANS_VERSION}/oxauth-server-${JANS_VERSION}.war -O /tmp/oxauth.war \
     && mkdir -p ${JETTY_BASE}/oxauth/webapps/oxauth \
     && unzip -qq /tmp/oxauth.war -d ${JETTY_BASE}/oxauth/webapps/oxauth \
     && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/oxauth --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
@@ -85,7 +85,7 @@ RUN apk add --no-cache py3-cryptography py3-multidict py3-yarl
 COPY requirements.txt /app/requirements.txt
 RUN pip3 install -U pip \
     && pip3 install --no-cache-dir -r /app/requirements.txt \
-    && rm -rf /src/pygluu-containerlib/.git
+    && rm -rf /src/jans-pycloudlib/.git
 
 # =======
 # Cleanup
@@ -116,7 +116,7 @@ ENV JANS_CONFIG_ADAPTER=consul \
     JANS_CONFIG_CONSUL_KEY_FILE=/etc/certs/consul_client.key \
     JANS_CONFIG_CONSUL_TOKEN_FILE=/etc/certs/consul_token \
     JANS_CONFIG_KUBERNETES_NAMESPACE=default \
-    JANS_CONFIG_KUBERNETES_CONFIGMAP=gluu \
+    JANS_CONFIG_KUBERNETES_CONFIGMAP=janssen \
     JANS_CONFIG_KUBERNETES_USE_KUBE_CONFIG=false
 
 # ==========
@@ -134,7 +134,7 @@ ENV JANS_SECRET_ADAPTER=vault \
     JANS_SECRET_VAULT_KEY_FILE=/etc/certs/vault_client.key \
     JANS_SECRET_VAULT_CACERT_FILE=/etc/certs/vault_ca.crt \
     JANS_SECRET_KUBERNETES_NAMESPACE=default \
-    JANS_SECRET_KUBERNETES_SECRET=gluu \
+    JANS_SECRET_KUBERNETES_SECRET=janssen \
     JANS_SECRET_KUBERNETES_USE_KUBE_CONFIG=false
 
 # ===============
@@ -147,7 +147,7 @@ ENV JANS_PERSISTENCE_TYPE=ldap \
     JANS_COUCHBASE_URL=localhost \
     JANS_COUCHBASE_USER=admin \
     JANS_COUCHBASE_CERT_FILE=/etc/certs/couchbase.crt \
-    JANS_COUCHBASE_PASSWORD_FILE=/etc/gluu/conf/couchbase_password \
+    JANS_COUCHBASE_PASSWORD_FILE=/etc/jans/conf/couchbase_password \
     JANS_COUCHBASE_CONN_TIMEOUT=10000 \
     JANS_COUCHBASE_CONN_MAX_WAIT=20000 \
     JANS_COUCHBASE_SCAN_CONSISTENCY=not_bounded
@@ -163,7 +163,7 @@ ENV JANS_MAX_RAM_PERCENTAGE=75.0 \
     JANS_DOCUMENT_STORE_TYPE=LOCAL \
     JANS_JACKRABBIT_URL=http://localhost:8080 \
     JANS_JACKRABBIT_ADMIN_ID=admin \
-    JANS_JACKRABBIT_ADMIN_PASSWORD_FILE=/etc/gluu/conf/jackrabbit_admin_password \
+    JANS_JACKRABBIT_ADMIN_PASSWORD_FILE=/etc/jans/conf/jackrabbit_admin_password \
     JANS_JAVA_OPTIONS="" \
     JANS_SSL_CERT_FROM_SECRETS=false \
     JANS_SYNC_JKS_ENABLED=false \
@@ -174,7 +174,7 @@ ENV JANS_MAX_RAM_PERCENTAGE=75.0 \
 # ==========
 
 LABEL name="Janssen Authorization Server" \
-    maintainer="Jansson org. <support@gluu.org>" \
+    maintainer="Jansson AS. <support@jans.io>" \
     vendor="Janssen Project" \
     version="5.0.0" \
     release="dev" \
@@ -182,13 +182,13 @@ LABEL name="Janssen Authorization Server" \
     description="OAuth 2.0 server and client; OpenID Connect Provider (OP) & UMA Authorization Server (AS)"
 
 RUN mkdir -p /etc/certs /deploy \
-    /opt/gluu/python/libs \
+    /opt/jans/python/libs \
     ${JETTY_BASE}/oxauth/custom/pages ${JETTY_BASE}/oxauth/custom/static \
     ${JETTY_BASE}/oxauth/custom/i18n \
-    /etc/gluu/conf \
+    /etc/jans/conf \
     /app/templates
 
-COPY libs /opt/gluu/python/libs
+COPY libs /opt/jans/python/libs
 COPY certs /etc/certs
 COPY jetty/oxauth_web_resources.xml ${JETTY_BASE}/oxauth/webapps/
 COPY jetty/oxauth.xml ${JETTY_BASE}/oxauth/webapps/

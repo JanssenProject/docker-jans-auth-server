@@ -8,19 +8,19 @@ distributions_managed = {
         "url": "https://ox.gluu.org/maven/org/gluufederation/opendj/opendj-server-legacy/{}",
         "source_package": "opendj-server-legacy-{}.zip"
     },
-    "oxauth-client": {
+    "jans-auth-client": {
         "url": "https://maven.jans.io/maven/org/jans/oxauth-client/{}",
         "source_package": "oxauth-client-{}-jar-with-dependencies.jar"
     },
-    "oxauth-server": {
-        "url": "https://maven.jans.io/maven/org/jans/oxauth-server/{}",
+    "jans-auth-server": {
+        "url": "https://maven.jans.io/maven/io/jans/jans-auth-server/{}",
         "source_package": "oxauth-server-{}.war"
     },
-    "scim-server": {
+    "jans-scim-server": {
         "url": "https://maven.jans.io/maven/org/jans/scim-server/{}",
         "source_package": "scim-server-{}.war"
     },
-    "fido2-server": {
+    "jans-fido2-server": {
         "url": "https://maven.jans.io/maven/org/jans/fido2-server/{}",
         "source_package": "fido2-server-{}.war"
     },
@@ -58,9 +58,9 @@ def parse_source(package_name, version):
 
 
 def find_current_jans_package_version_and_build_date(dockerfile):
-    jans_packages = ["oxauth-client", "opendj-server-legacy",
-                     "oxauth-server","scim-server",
-                     "fido2-server"]
+    jans_packages = ["jans-auth-client", "opendj-server-legacy",
+                     "jans-auth-server", "jans-scim-server",
+                     "jans-fido2-server"]
     wrends_version_search_string = "ENV WRENDS_VERSION="
     wrends_build_date_search_string = "ENV WRENDS_BUILD_DATE="
     jans_version_search_string = "ENV JANS_VERSION="
