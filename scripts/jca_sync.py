@@ -8,7 +8,7 @@ from settings import LOGGING_CONFIG
 from jans.pycloudlib.document import RClone
 
 ROOT_DIR = "/repository/default"
-SYNC_DIR = "/opt/jans/jetty/oxauth/custom"
+SYNC_DIR = "/opt/jans/jetty/auth-server/custom"
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("webdav")

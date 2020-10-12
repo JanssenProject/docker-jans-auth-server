@@ -60,11 +60,11 @@ ENV JANS_VERSION=5.0.0-SNAPSHOT
 ENV JANS_BUILD_DATE="2020-09-28 18:23"
 
 # Install oxAuth
-RUN wget -q https://maven.jans.io/maven/io/jans/jans-auth-server/${JANS_VERSION}/oxauth-server-${JANS_VERSION}.war -O /tmp/oxauth.war \
-    && mkdir -p ${JETTY_BASE}/oxauth/webapps/oxauth \
-    && unzip -qq /tmp/oxauth.war -d ${JETTY_BASE}/oxauth/webapps/oxauth \
-    && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/oxauth --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
-    && rm -f /tmp/oxauth.war
+RUN wget -q https://maven.jans.io/maven/io/jans/jans-auth-server/${JANS_VERSION}/auth-server-server-${JANS_VERSION}.war -O /tmp/auth-server.war \
+    && mkdir -p ${JETTY_BASE}/auth-server/webapps/auth-server \
+    && unzip -qq /tmp/auth-server.war -d ${JETTY_BASE}/auth-server/webapps/auth-server \
+    && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/auth-server --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
+    && rm -f /tmp/auth-server.war
 
 # ===========
 # Custom libs
@@ -183,15 +183,15 @@ LABEL name="Janssen Authorization Server" \
 
 RUN mkdir -p /etc/certs /deploy \
     /opt/jans/python/libs \
-    ${JETTY_BASE}/oxauth/custom/pages ${JETTY_BASE}/oxauth/custom/static \
-    ${JETTY_BASE}/oxauth/custom/i18n \
+    ${JETTY_BASE}/auth-server/custom/pages ${JETTY_BASE}/auth-server/custom/static \
+    ${JETTY_BASE}/auth-server/custom/i18n \
     /etc/jans/conf \
     /app/templates
 
 COPY libs /opt/jans/python/libs
 COPY certs /etc/certs
-COPY jetty/oxauth_web_resources.xml ${JETTY_BASE}/oxauth/webapps/
-COPY jetty/oxauth.xml ${JETTY_BASE}/oxauth/webapps/
+COPY jetty/auth-server_web_resources.xml ${JETTY_BASE}/auth-server/webapps/
+COPY jetty/auth-server.xml ${JETTY_BASE}/auth-server/webapps/
 COPY conf/*.tmpl /app/templates/
 COPY scripts /app/scripts
 RUN chmod +x /app/scripts/entrypoint.sh
