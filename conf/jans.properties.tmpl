@@ -1,13 +1,13 @@
 persistence.type=%(persistence_type)s
 
-oxauth_ConfigurationEntryDN=ou=oxauth,ou=configuration,o=gluu
-oxtrust_ConfigurationEntryDN=ou=oxtrust,ou=configuration,o=gluu
-oxidp_ConfigurationEntryDN=ou=oxidp,ou=configuration,o=gluu
-oxcas_ConfigurationEntryDN=ou=oxcas,ou=configuration,o=gluu
-oxpassport_ConfigurationEntryDN=ou=oxpassport,ou=configuration,o=gluu
-oxradius_ConfigurationEntryDN=ou=oxradius,ou=configuration,o=gluu
-fido2_ConfigurationEntryDN=ou=fido2,ou=configuration,o=gluu
+oxauth_ConfigurationEntryDN=ou=oxauth,ou=configuration,o=%(namespace)s
+oxtrust_ConfigurationEntryDN=ou=oxtrust,ou=configuration,o=%(namespace)s
+oxidp_ConfigurationEntryDN=ou=oxidp,ou=configuration,o=%(namespace)s
+oxcas_ConfigurationEntryDN=ou=oxcas,ou=configuration,o=%(namespace)s
+oxpassport_ConfigurationEntryDN=ou=oxpassport,ou=configuration,o=%(namespace)s
+oxradius_ConfigurationEntryDN=ou=oxradius,ou=configuration,o=%(namespace)s
+fido2_ConfigurationEntryDN=ou=fido2,ou=configuration,o=%(namespace)s
 
-certsDir=%(certFolder)s
+certsDir=/etc/certs
 confDir=
-pythonModulesDir=%(gluuOptPythonFolder)s/libs:/opt/jython/Lib/site-packages
+pythonModulesDir=/opt/%(namespace)s/python/libs:/opt/jython/Lib/site-packages

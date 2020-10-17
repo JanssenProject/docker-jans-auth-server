@@ -1,5 +1,5 @@
 JANS_VERSION=5.0.0
-IMAGE_NAME=janssenproject/jans-auth-server
+IMAGE_NAME=janssenproject/auth-server
 UNSTABLE_VERSION=dev
 
 build-dev:

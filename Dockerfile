@@ -47,20 +47,21 @@ EXPOSE 8080
 # ======
 
 ARG JYTHON_VERSION=2.7.2
-RUN wget -q https://maven.jans.io/dist/jython/${JYTHON_VERSION}/jython-installer-${JYTHON_VERSION}.jar -O /tmp/jython-installer.jar \
+RUN wget -q https://repo1.maven.org/maven2/org/python/jython-installer/${JYTHON_VERSION}/jython-installer-${JYTHON_VERSION}.jar -O /tmp/jython-installer.jar \
     && mkdir -p /opt/jython \
     && java -jar /tmp/jython-installer.jar -v -s -d /opt/jython \
     && rm -f /tmp/jython-installer.jar /tmp/*.properties
 
-# ======
-# oxAuth
-# ======
+# ===========
+# Auth server
+# ===========
 
 ENV JANS_VERSION=5.0.0-SNAPSHOT
-ENV JANS_BUILD_DATE="2020-09-28 18:23"
+ENV JANS_BUILD_DATE="2020-10-17 19:42"
+ENV JANS_SOURCE_URL=https://maven.jans.io/maven/io/jans/jans-auth-server/${JANS_VERSION}/jans-auth-server-${JANS_VERSION}.war
 
 # Install oxAuth
-RUN wget -q https://maven.jans.io/maven/io/jans/jans-auth-server/${JANS_VERSION}/auth-server-server-${JANS_VERSION}.war -O /tmp/auth-server.war \
+RUN wget -q ${JANS_SOURCE_URL} -O /tmp/auth-server.war \
     && mkdir -p ${JETTY_BASE}/auth-server/webapps/auth-server \
     && unzip -qq /tmp/auth-server.war -d ${JETTY_BASE}/auth-server/webapps/auth-server \
     && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/auth-server --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
@@ -81,7 +82,7 @@ RUN wget -q https://repo1.maven.org/maven2/org/jsmpp/jsmpp/${JSMPP_VERSION}/jsmp
 # Python
 # ======
 
-RUN apk add --no-cache py3-cryptography py3-multidict py3-yarl
+RUN apk add --no-cache py3-cryptography
 COPY requirements.txt /app/requirements.txt
 RUN pip3 install -U pip \
     && pip3 install --no-cache-dir -r /app/requirements.txt \
@@ -115,8 +116,9 @@ ENV JANS_CONFIG_ADAPTER=consul \
     JANS_CONFIG_CONSUL_CERT_FILE=/etc/certs/consul_client.crt \
     JANS_CONFIG_CONSUL_KEY_FILE=/etc/certs/consul_client.key \
     JANS_CONFIG_CONSUL_TOKEN_FILE=/etc/certs/consul_token \
+    JANS_CONFIG_CONSUL_NAMESPACE=jans \
     JANS_CONFIG_KUBERNETES_NAMESPACE=default \
-    JANS_CONFIG_KUBERNETES_CONFIGMAP=janssen \
+    JANS_CONFIG_KUBERNETES_CONFIGMAP=jans \
     JANS_CONFIG_KUBERNETES_USE_KUBE_CONFIG=false
 
 # ==========
@@ -133,8 +135,9 @@ ENV JANS_SECRET_ADAPTER=vault \
     JANS_SECRET_VAULT_CERT_FILE=/etc/certs/vault_client.crt \
     JANS_SECRET_VAULT_KEY_FILE=/etc/certs/vault_client.key \
     JANS_SECRET_VAULT_CACERT_FILE=/etc/certs/vault_ca.crt \
+    JANS_SECRET_VAULT_NAMESPACE=jans \
     JANS_SECRET_KUBERNETES_NAMESPACE=default \
-    JANS_SECRET_KUBERNETES_SECRET=janssen \
+    JANS_SECRET_KUBERNETES_SECRET=jans \
     JANS_SECRET_KUBERNETES_USE_KUBE_CONFIG=false
 
 # ===============
@@ -167,14 +170,15 @@ ENV JANS_MAX_RAM_PERCENTAGE=75.0 \
     JANS_JAVA_OPTIONS="" \
     JANS_SSL_CERT_FROM_SECRETS=false \
     JANS_SYNC_JKS_ENABLED=false \
-    JANS_SYNC_JKS_INTERVAL=30
+    JANS_SYNC_JKS_INTERVAL=30 \
+    JANS_NAMESPACE=jans
 
 # ==========
 # misc stuff
 # ==========
 
 LABEL name="Janssen Authorization Server" \
-    maintainer="Jansson AS. <support@jans.io>" \
+    maintainer="Janssen Project <support@jans.io>" \
     vendor="Janssen Project" \
     version="5.0.0" \
     release="dev" \

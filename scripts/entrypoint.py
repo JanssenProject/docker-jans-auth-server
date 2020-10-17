@@ -4,7 +4,7 @@ import re
 
 from jans.pycloudlib import get_manager
 from jans.pycloudlib.persistence import render_couchbase_properties
-from jans.pycloudlib.persistence import render_gluu_properties
+from jans.pycloudlib.persistence import render_jans_properties
 from jans.pycloudlib.persistence import render_hybrid_properties
 from jans.pycloudlib.persistence import render_ldap_properties
 from jans.pycloudlib.persistence import render_salt
@@ -64,7 +64,7 @@ def main():
     persistence_type = os.environ.get("JANS_PERSISTENCE_TYPE", "ldap")
 
     render_salt(manager, "/app/templates/salt.tmpl", "/etc/jans/conf/salt")
-    render_gluu_properties("/app/templates/jans.properties.tmpl", "/etc/jans/conf/jans.properties")
+    render_jans_properties("/app/templates/jans.properties.tmpl", "/etc/jans/conf/jans.properties")
 
     if persistence_type in ("ldap", "hybrid"):
         render_ldap_properties(
