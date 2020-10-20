@@ -7,9 +7,9 @@ set -e
 
 get_debug_opt() {
     debug_opt=""
-    if [ -n "${JANS_DEBUG_PORT}" ]; then
+    if [ -n "${CLOUD_NATIVE_DEBUG_PORT}" ]; then
         debug_opt="
-            -agentlib:jdwp=transport=dt_socket,address=${JANS_DEBUG_PORT},server=y,suspend=n
+            -agentlib:jdwp=transport=dt_socket,address=${CLOUD_NATIVE_DEBUG_PORT},server=y,suspend=n
         "
     fi
     echo "${debug_opt}"
@@ -52,12 +52,12 @@ exec java \
     -server \
     -XX:+DisableExplicitGC \
     -XX:+UseContainerSupport \
-    -XX:MaxRAMPercentage=$JANS_MAX_RAM_PERCENTAGE \
+    -XX:MaxRAMPercentage=$CLOUD_NATIVE_MAX_RAM_PERCENTAGE \
     -Djans.base=/etc/jans \
     -Dserver.base=/opt/jans/jetty/auth-server \
     -Dlog.base=/opt/jans/jetty/auth-server \
     -Dpython.home=/opt/jython \
     -Djava.io.tmpdir=/opt/jetty/temp \
     $(get_debug_opt) \
-    ${JANS_JAVA_OPTIONS} \
+    ${CLOUD_NATIVE_JAVA_OPTIONS} \
     -jar /opt/jetty/start.jar
