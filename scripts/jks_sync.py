@@ -59,14 +59,14 @@ def sync_jwks():
 
 def main():
     sync_enabled = as_boolean(
-        os.environ.get("CLOUD_NATIVE_SYNC_JKS_ENABLED", False)
+        os.environ.get("CN_SYNC_JKS_ENABLED", False)
     )
     if not sync_enabled:
         logger.warning("JKS sync is disabled")
         return
 
     # delay between JKS sync (in seconds)
-    sync_interval = os.environ.get("CLOUD_NATIVE_SYNC_JKS_INTERVAL", 30)
+    sync_interval = os.environ.get("CN_SYNC_JKS_INTERVAL", 30)
 
     try:
         sync_interval = int(sync_interval)
