@@ -8,7 +8,6 @@ from jans.pycloudlib.persistence import render_jans_properties
 from jans.pycloudlib.persistence import render_hybrid_properties
 from jans.pycloudlib.persistence import render_ldap_properties
 from jans.pycloudlib.persistence import render_salt
-# from jans.pycloudlib.persistence import sync_couchbase_cert
 from jans.pycloudlib.persistence import sync_couchbase_truststore
 from jans.pycloudlib.persistence import sync_ldap_truststore
 from jans.pycloudlib.utils import cert_to_truststore
@@ -87,11 +86,11 @@ def main():
     if persistence_type == "hybrid":
         render_hybrid_properties("/etc/jans/conf/jans-hybrid.properties")
 
-    if not os.path.isfile("/etc/certs/jans_https.crt"):
+    if not os.path.isfile("/etc/certs/web_https.crt"):
         if as_boolean(os.environ.get("CN_SSL_CERT_FROM_SECRETS", False)):
-            manager.secret.to_file("ssl_cert", "/etc/certs/jans_https.crt")
+            manager.secret.to_file("ssl_cert", "/etc/certs/web_https.crt")
         else:
-            get_server_certificate(manager.config.get("hostname"), 443, "/etc/certs/jans_https.crt")
+            get_server_certificate(manager.config.get("hostname"), 443, "/etc/certs/web_https.crt")
 
     cert_to_truststore(
         "jans_https",
@@ -100,57 +99,39 @@ def main():
         "changeit",
     )
 
-    if not os.path.isfile("/etc/certs/idp-signing.crt"):
-        manager.secret.to_file("idp3SigningCertificateText", "/etc/certs/idp-signing.crt")
+    # if not os.path.isfile("/etc/certs/idp-signing.crt"):
+    #     manager.secret.to_file("idp3SigningCertificateText", "/etc/certs/idp-signing.crt")
 
-    manager.secret.to_file("passport_rp_jks_base64", "/etc/certs/passport-rp.jks",
-                           decode=True, binary_mode=True)
-
-    manager.secret.to_file("api_rp_jks_base64", "/etc/certs/api-rp.jks",
-                           decode=True, binary_mode=True)
-    with open(manager.config.get("api_rp_client_jwks_fn"), "w") as f:
-        f.write(
-            base64.b64decode(manager.secret.get("api_rp_client_base64_jwks")).decode()
-        )
-
-    manager.secret.to_file("api_rs_jks_base64", "/etc/certs/api-rs.jks",
-                           decode=True, binary_mode=True)
-    with open(manager.config.get("api_rs_client_jwks_fn"), "w") as f:
-        f.write(
-            base64.b64decode(manager.secret.get("api_rs_client_base64_jwks")).decode()
-        )
-
-    # manager.secret.to_file("scim_rs_jks_base64", "/etc/certs/scim-rs.jks",
+    # manager.secret.to_file("passport_rp_jks_base64", "/etc/certs/passport-rp.jks",
     #                        decode=True, binary_mode=True)
-    # with open(manager.config.get("scim_rs_client_jwks_fn"), "w") as f:
+
+    # manager.secret.to_file("api_rp_jks_base64", "/etc/certs/api-rp.jks",
+    #                        decode=True, binary_mode=True)
+    # with open(manager.config.get("api_rp_client_jwks_fn"), "w") as f:
     #     f.write(
-    #         base64.b64decode(manager.secret.get("scim_rs_client_base64_jwks")).decode()
+    #         base64.b64decode(manager.secret.get("api_rp_client_base64_jwks")).decode(),
     #     )
 
-    # manager.secret.to_file("scim_rp_jks_base64", "/etc/certs/scim-rp.jks",
+    # manager.secret.to_file("api_rs_jks_base64", "/etc/certs/api-rs.jks",
     #                        decode=True, binary_mode=True)
-    # with open(manager.config.get("scim_rp_client_jwks_fn"), "w") as f:
+    # with open(manager.config.get("api_rs_client_jwks_fn"), "w") as f:
     #     f.write(
-    #         base64.b64decode(manager.secret.get("scim_rp_client_base64_jwks")).decode()
+    #         base64.b64decode(manager.secret.get("api_rs_client_base64_jwks")).decode(),
     #     )
 
     modify_jetty_xml()
     modify_webdefault_xml()
 
-    sync_enabled = as_boolean(
-        os.environ.get("CN_SYNC_JKS_ENABLED", False)
-    )
+    sync_enabled = as_boolean(os.environ.get("CN_SYNC_JKS_ENABLED", False))
     if not sync_enabled:
         manager.secret.to_file(
-            "auth-server_jks_base64",
-            "/etc/certs/auth-server-keys.jks",
+            "oxauth_jks_base64",
+            "/etc/certs/oxauth-keys.jks",
             decode=True,
             binary_mode=True,
         )
-        with open("/etc/certs/auth-server-keys.json", "w") as f:
-            f.write(
-                base64.b64decode(manager.secret.get("auth-server_openid_key_base64")).decode()
-            )
+        with open("/etc/certs/oxauth-keys.json", "w") as f:
+            f.write(base64.b64decode(manager.secret.get("oxauth_openid_key_base64")).decode())
 
 
 if __name__ == "__main__":

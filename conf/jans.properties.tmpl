@@ -1,13 +1,8 @@
 persistence.type=%(persistence_type)s
 
-oxauth_ConfigurationEntryDN=ou=oxauth,ou=configuration,o=%(namespace)s
-oxtrust_ConfigurationEntryDN=ou=oxtrust,ou=configuration,o=%(namespace)s
-oxidp_ConfigurationEntryDN=ou=oxidp,ou=configuration,o=%(namespace)s
-oxcas_ConfigurationEntryDN=ou=oxcas,ou=configuration,o=%(namespace)s
-oxpassport_ConfigurationEntryDN=ou=oxpassport,ou=configuration,o=%(namespace)s
-oxradius_ConfigurationEntryDN=ou=oxradius,ou=configuration,o=%(namespace)s
-fido2_ConfigurationEntryDN=ou=fido2,ou=configuration,o=%(namespace)s
+jansAuth_ConfigurationEntryDN=ou=jans-auth,ou=configuration,o=jans
+fido2_ConfigurationEntryDN=ou=fido2,ou=configuration,o=jans
 
 certsDir=/etc/certs
 confDir=
-pythonModulesDir=/opt/%(namespace)s/python/libs:/opt/jython/Lib/site-packages
+pythonModulesDir=/opt/jans/python/libs:/opt/jython/Lib/site-packages

@@ -37,7 +37,7 @@ move_builtin_jars
 python3 /app/scripts/wait.py
 
 if [ ! -f /deploy/touched ]; then
-    python3 /app/scripts/entrypoint.py
+    python3 /app/scripts/bootstrap.py
     touch /deploy/touched
 fi
 
