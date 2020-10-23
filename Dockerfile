@@ -57,15 +57,15 @@ RUN wget -q https://repo1.maven.org/maven2/org/python/jython-installer/${JYTHON_
 # ===========
 
 ENV CN_VERSION=5.0.0-SNAPSHOT
-ENV CN_BUILD_DATE="2020-10-21 14:02"
+ENV CN_BUILD_DATE="2020-10-23 11:23"
 ENV CN_SOURCE_URL=https://maven.jans.io/maven/io/jans/jans-auth-server/${CN_VERSION}/jans-auth-server-${CN_VERSION}.war
 
 # Install oxAuth
-RUN wget -q ${CN_SOURCE_URL} -O /tmp/auth-server.war \
-    && mkdir -p ${JETTY_BASE}/auth-server/webapps/auth-server \
-    && unzip -qq /tmp/auth-server.war -d ${JETTY_BASE}/auth-server/webapps/auth-server \
-    && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/auth-server --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
-    && rm -f /tmp/auth-server.war
+RUN wget -q ${CN_SOURCE_URL} -O /tmp/jans-auth.war \
+    && mkdir -p ${JETTY_BASE}/jans-auth/webapps/jans-auth \
+    && unzip -qq /tmp/jans-auth.war -d ${JETTY_BASE}/jans-auth/webapps/jans-auth \
+    && java -jar ${JETTY_HOME}/start.jar jetty.home=${JETTY_HOME} jetty.base=${JETTY_BASE}/jans-auth --add-to-start=server,deploy,annotations,resources,http,http-forwarded,threadpool,jsp,websocket \
+    && rm -f /tmp/jans-auth.war
 
 # ===========
 # Custom libs
@@ -187,15 +187,15 @@ LABEL name="Janssen Authorization Server" \
 
 RUN mkdir -p /etc/certs /deploy \
     /opt/jans/python/libs \
-    ${JETTY_BASE}/auth-server/custom/pages ${JETTY_BASE}/auth-server/custom/static \
-    ${JETTY_BASE}/auth-server/custom/i18n \
+    ${JETTY_BASE}/jans-auth/custom/pages ${JETTY_BASE}/jans-auth/custom/static \
+    ${JETTY_BASE}/jans-auth/custom/i18n \
     /etc/jans/conf \
     /app/templates
 
 COPY libs /opt/jans/python/libs
 COPY certs /etc/certs
-COPY jetty/auth-server_web_resources.xml ${JETTY_BASE}/auth-server/webapps/
-COPY jetty/auth-server.xml ${JETTY_BASE}/auth-server/webapps/
+COPY jetty/jans-auth_web_resources.xml ${JETTY_BASE}/jans-auth/webapps/
+COPY jetty/jans-auth.xml ${JETTY_BASE}/jans-auth/webapps/
 COPY conf/*.tmpl /app/templates/
 COPY scripts /app/scripts
 RUN chmod +x /app/scripts/entrypoint.sh

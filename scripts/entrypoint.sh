@@ -17,15 +17,15 @@ get_debug_opt() {
 
 move_builtin_jars() {
     # move twilio lib
-    if [ ! -f /opt/jans/jetty/auth-server/custom/libs/twilio.jar ]; then
-        mkdir -p /opt/jans/jetty/auth-server/custom/libs
-        mv /usr/share/java/twilio.jar /opt/jans/jetty/auth-server/custom/libs/twilio.jar
+    if [ ! -f /opt/jans/jetty/jans-auth/custom/libs/twilio.jar ]; then
+        mkdir -p /opt/jans/jetty/jans-auth/custom/libs
+        mv /usr/share/java/twilio.jar /opt/jans/jetty/jans-auth/custom/libs/twilio.jar
     fi
 
     # move jsmpp lib
-    if [ ! -f /opt/jans/jetty/auth-server/custom/libs/jsmpp.jar ]; then
-        mkdir -p /opt/jans/jetty/auth-server/custom/libs
-        mv /usr/share/java/jsmpp.jar /opt/jans/jetty/auth-server/custom/libs/jsmpp.jar
+    if [ ! -f /opt/jans/jetty/jans-auth/custom/libs/jsmpp.jar ]; then
+        mkdir -p /opt/jans/jetty/jans-auth/custom/libs
+        mv /usr/share/java/jsmpp.jar /opt/jans/jetty/jans-auth/custom/libs/jsmpp.jar
     fi
 }
 
@@ -46,7 +46,7 @@ python3 /app/scripts/jca_sync.py &
 python3 /app/scripts/mod_context.py
 
 # run oxAuth server
-cd /opt/jans/jetty/auth-server
+cd /opt/jans/jetty/jans-auth
 mkdir -p /opt/jetty/temp
 exec java \
     -server \
@@ -54,8 +54,8 @@ exec java \
     -XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=$CN_MAX_RAM_PERCENTAGE \
     -Djans.base=/etc/jans \
-    -Dserver.base=/opt/jans/jetty/auth-server \
-    -Dlog.base=/opt/jans/jetty/auth-server \
+    -Dserver.base=/opt/jans/jetty/jans-auth \
+    -Dlog.base=/opt/jans/jetty/jans-auth \
     -Dpython.home=/opt/jython \
     -Djava.io.tmpdir=/opt/jetty/temp \
     $(get_debug_opt) \
