@@ -201,5 +201,22 @@ COPY conf/*.tmpl /app/templates/
 COPY scripts /app/scripts
 RUN chmod +x /app/scripts/entrypoint.sh
 
+# # create non-root user
+RUN adduser -s /bin/sh -D -G root -u 1000 jetty
+
+ # adjust ownership
+RUN chown -R 1000:1000 /opt/gluu/jetty \
+    && chown -R 1000:1000 /opt/jetty \
+    && chown -R 1000:1000 /deploy \
+    && chown -R 1000:1000 /tmp \
+    && chmod -R g+w /usr/lib/jvm/default-jvm/jre/lib/security/cacerts \
+    && chgrp -R 0 /opt/gluu/jetty && chmod -R g=u /opt/gluu/jetty \
+    && chgrp -R 0 /opt/jetty && chmod -R g=u /opt/jetty \
+    && chgrp -R 0 /tmp && chmod -R g=u /tmp \
+    && chgrp -R 0 /deploy && chmod -R g=u /deploy \
+    && chgrp -R 0 /etc/certs && chmod -R g=u /etc/certs \
+    && chgrp -R 0 /etc/gluu && chmod -R g=u /etc/gluu
+USER 1000
+
 ENTRYPOINT ["tini", "-e", "143", "-g", "--"]
 CMD ["sh", "/app/scripts/entrypoint.sh"]
