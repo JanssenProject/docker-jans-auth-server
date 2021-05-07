@@ -138,6 +138,9 @@ def main():
         # Open Banking transport signing cert and key. Use for generating the PKCS12 file.
         ob_transport_cert = "/etc/certs/ob-transport.crt"
         ob_transport_key = "/etc/certs/ob-transport.key"
+        # Open Banking truststore signing cert and key. Use for generating the PKCS12 file.
+        ob_truststore_cert = "/etc/certs/ob-truststore.crt"
+        ob_truststore_key = "/etc/certs/ob-truststore.key"
 
         alias = os.environ.get("CN_OB_EXT_SIGNING_ALIAS", "OpenBanking")
 
@@ -193,6 +196,24 @@ def main():
                 jks_fn="/etc/certs/ob-transport.jks",
                 in_key=ob_transport_key,
                 in_cert=ob_transport_cert,
+                alias=alias,
+            )
+
+        if os.path.isfile(ob_truststore_cert):
+            cert_to_truststore(
+                alias,
+                ob_truststore_cert,
+                "/usr/lib/jvm/default-jvm/jre/lib/security/cacerts",
+                "changeit",
+            )
+
+            generate_keystore(
+                "ob-truststore",
+                manager.config.get("hostname"),
+                manager.secret.get("auth_openid_jks_pass"),
+                jks_fn="/etc/certs/ob-truststore.jks",
+                in_key=ob_truststore_key,
+                in_cert=ob_truststore_cert,
                 alias=alias,
             )
 
