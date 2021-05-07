@@ -178,22 +178,23 @@ def main():
             alias=alias,
         )
 
-        cert_to_truststore(
-            alias,
-            ob_transport_cert,
-            "/usr/lib/jvm/default-jvm/jre/lib/security/cacerts",
-            "changeit",
-        )
+        if os.path.isfile(ob_transport_cert):
+            cert_to_truststore(
+                alias,
+                ob_transport_cert,
+                "/usr/lib/jvm/default-jvm/jre/lib/security/cacerts",
+                "changeit",
+            )
 
-        generate_keystore(
-            "ob-transport",
-            manager.config.get("hostname"),
-            manager.secret.get("auth_openid_jks_pass"),
-            jks_fn="/etc/certs/ob-transport.jks",
-            in_key=ob_transport_key,
-            in_cert=ob_transport_cert,
-            alias=alias,
-        )
+            generate_keystore(
+                "ob-transport",
+                manager.config.get("hostname"),
+                manager.secret.get("auth_openid_jks_pass"),
+                jks_fn="/etc/certs/ob-transport.jks",
+                in_key=ob_transport_key,
+                in_cert=ob_transport_cert,
+                alias=alias,
+            )
 
     else:
         # sync_enabled = as_boolean(os.environ.get("CN_SYNC_JKS_ENABLED", False))
