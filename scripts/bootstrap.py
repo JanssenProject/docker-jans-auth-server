@@ -2,6 +2,7 @@ import base64
 import os
 import re
 from urllib.parse import urlparse
+from contextlib import suppress
 
 from jans.pycloudlib import get_manager
 from jans.pycloudlib.persistence import render_couchbase_properties
@@ -135,12 +136,17 @@ def main():
         # Open Banking external signing cert and key. Use for generating the PKCS12 and jks keystore
         ext_cert = "/etc/certs/ob-ext-signing.crt"
         ext_key = "/etc/certs/ob-ext-signing.key"
+        ext_key_pin = "/etc/certs/ob-ext-signing.pin"
+
         # Open Banking transport signing cert and key. Use for generating the PKCS12 file.
         ob_transport_cert = "/etc/certs/ob-transport.crt"
         ob_transport_key = "/etc/certs/ob-transport.key"
+        ob_transport_pin = "/etc/certs/ob-transport.pin"
+
         # Open Banking truststore signing cert and key. Use for generating the PKCS12 file.
         ob_truststore_cert = "/etc/certs/ob-truststore.crt"
         ob_truststore_key = "/etc/certs/ob-truststore.key"
+        ob_truststore_pin = "/etc/certs/ob-truststore.pin"
 
         alias = os.environ.get("CN_OB_EXT_SIGNING_ALIAS", "OpenBanking")
 
@@ -171,6 +177,11 @@ def main():
             "changeit",
         )
 
+        ext_key_passphrase = ""
+        with suppress(FileNotFoundError):
+            with open(ext_key_pin) as f:
+                ext_key_passphrase = f.read().strip()
+
         generate_keystore(
             "ob-ext-signing",
             manager.config.get("hostname"),
@@ -179,6 +190,7 @@ def main():
             in_key=ext_key,
             in_cert=ext_cert,
             alias=alias,
+            in_passwd=ext_key_passphrase,
         )
 
         if os.path.isfile(ob_transport_cert):
@@ -189,6 +201,11 @@ def main():
                 "changeit",
             )
 
+            ob_transport_passphrase = ""
+            with suppress(FileNotFoundError):
+                with open(ob_transport_pin) as f:
+                    ob_transport_passphrase = f.read().strip()
+
             generate_keystore(
                 "ob-transport",
                 manager.config.get("hostname"),
@@ -197,6 +214,7 @@ def main():
                 in_key=ob_transport_key,
                 in_cert=ob_transport_cert,
                 alias=alias,
+                in_passwd=ob_transport_passphrase,
             )
 
         if os.path.isfile(ob_truststore_cert):
@@ -207,6 +225,11 @@ def main():
                 "changeit",
             )
 
+            ob_truststore_passphrase = ""
+            with suppress(FileNotFoundError):
+                with open(ob_truststore_pin) as f:
+                    ob_truststore_passphrase = f.read().strip()
+
             generate_keystore(
                 "ob-truststore",
                 manager.config.get("hostname"),
@@ -215,6 +238,7 @@ def main():
                 in_key=ob_truststore_key,
                 in_cert=ob_truststore_cert,
                 alias=alias,
+                in_passwd=ob_truststore_passphrase,
             )
 
     else:
